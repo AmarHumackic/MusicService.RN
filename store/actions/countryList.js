@@ -55,29 +55,3 @@ export const fetchCountries = () => {
         
     }
 }
-
-storeData = async (countriesArr) => {
-    try {
-        await AsyncStorage.setItem('countries', countriesArr);
-        console.log('Async setted');
-    } catch (error) {
-        console.log('Async set error');
-        // Error saving data
-    }
-};
-
-retrieveData = async () => {
-    let data = null;
-    try {
-        data = await AsyncStorage.getItem('countries');
-        if (data !== null) {
-            // We have data!!
-            console.log('Async getted');
-            console.log(data);
-        }
-    } catch (error) {
-        console.log('Async get error');
-        // Error retrieving data
-    }
-    return data;
-};

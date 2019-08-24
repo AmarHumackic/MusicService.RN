@@ -37,11 +37,19 @@ const CountryList = props => {
     };
 
     const renderListItem = itemData => {
+
         return (
             <ListItem
                 title={itemData.item.name}
                 image={itemData.item.flag}
-                onSelectMeal={() => alert('Item clicked!')} />
+                onSelectCountry={() => {
+                    props.navigation.navigate({
+                        routeName: 'TopTracks',
+                        params: {
+                            name: itemData.item.name
+                        }
+                    });
+                }} />
         );
     };
 

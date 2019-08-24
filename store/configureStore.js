@@ -2,9 +2,11 @@ import { createStore, combineReducers, compose, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 
 import countryListReducer from './reducers/countryList';
+import tracksReducer from './reducers/tracks';
 
 const rootReducer = combineReducers({
-  countryList: countryListReducer
+  countryList: countryListReducer,
+  tracks: tracksReducer
 });
 
 let composeEnhancers = compose;

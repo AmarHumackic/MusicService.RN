@@ -24,7 +24,7 @@ const CountryListScreen = props => {
     } else if (error) {
         countriesOutput = <Text>{error.message}</Text>;
     } else {
-        countriesOutput = <CountryList countries={countries}></CountryList>;
+        countriesOutput = <CountryList countries={countries} navigation={props.navigation}></CountryList>;
     }
 
 
