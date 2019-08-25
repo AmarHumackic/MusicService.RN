@@ -3,10 +3,12 @@ import thunk from "redux-thunk";
 
 import countryListReducer from './reducers/countryList';
 import tracksReducer from './reducers/tracks';
+import authReducer from './reducers/auth';
 
 const rootReducer = combineReducers({
   countryList: countryListReducer,
-  tracks: tracksReducer
+  tracks: tracksReducer,
+  auth: authReducer
 });
 
 let composeEnhancers = compose;

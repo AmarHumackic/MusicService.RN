@@ -1,7 +1,7 @@
 import * as actionTypes from './actionTypes';
 import Axios from 'axios';
-import { API_KEY } from '../../APIconfig';
-
+import { API_KEY, SHARED_SECRET } from '../../APIconfig';
+import * as Crypto from 'expo-crypto';
 
 export const fetchTracksStart = () => {
     return {
@@ -27,7 +27,6 @@ export const fetchTracks = (countryName) => {
     return dispatch => {
         dispatch(fetchTracksStart());
         Axios.get(`http://ws.audioscrobbler.com/2.0/?method=geo.gettoptracks&country=${countryName}&api_key=${API_KEY}&format=json`).then(response => {
-            console.log(response);
             const tracksArr = [];
             response.data.tracks.track.forEach(element => {
                 tracksArr.push({
@@ -37,7 +36,6 @@ export const fetchTracks = (countryName) => {
             });
             dispatch(fetchTracksSuccess(tracksArr));
         }).catch(error => {
-            console.log(error);
             dispatch(fetchTracksFail(error));
         });
     }
@@ -67,7 +65,6 @@ export const fetchDetails = (artistName, trackName) => {
     return dispatch => {
         dispatch(fetchDetailsStart());
         Axios.get(`http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${API_KEY}&artist=${artistName}&track=${trackName}&format=json`).then(response => {
-            console.log(response);
             const track = {
                 album: response.data.track.album,
                 artist: response.data.track.artist ? response.data.track.artist : null,
@@ -84,8 +81,8 @@ export const fetchDetails = (artistName, trackName) => {
             }
             dispatch(fetchDetailsSuccess(track));
         }).catch(error => {
-            console.log(error);
             dispatch(fetchDetailsFail(error));
         });
     }
 }
+

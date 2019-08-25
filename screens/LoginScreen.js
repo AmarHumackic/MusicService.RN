@@ -1,26 +1,131 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, TextInput, Button, Keyboard, KeyboardAvoidingView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Colors from '../constants/Colors';
-import { Ionicons } from '@expo/vector-icons';
+import { auth } from '../store/actions/auth';
 
 const LoginScreen = props => {
+    const [username, setUsername] = useState(null);
+    const [password, setPassword] = useState(null);
+    const [passwordShow, setPasswordShow] = useState(false);
+    const [passwordIcon, setPasswordIcon] = useState('md-eye-off');
+
+    let loading = useSelector(state => state.auth.loading);
+    let sessionKey = useSelector(state => state.auth.sessionKey);
+
+    const dispatch = useDispatch();
+    const loginHandler = () => {
+        dispatch(auth(username, password));
+    };
+
+    useEffect(() => {
+        if (sessionKey) {
+            Keyboard.dismiss();
+            props.navigation.navigate('CountryList');
+            setUsername(null),
+                setPassword(null);
+        }
+        alert('sesKey: ' + sessionKey);
+    }, [sessionKey]);
+
+    let submitButton = <Button title='Log In' onPress={loginHandler} />;
+    if (loading) {
+        submitButton = <ActivityIndicator></ActivityIndicator>;
+    }
     return (
-        <View>
-            <Text>Log In Screen!</Text>
-        </View>
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
+            <View style={styles.header}>
+                <Text style={styles.logoText}>last.fm</Text>
+                <Text style={styles.headerText}>Music Service</Text>
+            </View>
+            <View style={styles.form}>
+                <TextInput
+                    style={styles.textInput}
+                    value={username}
+                    onChangeText={text => setUsername(text)}
+                    placeholder={'Username'}
+                    autoCapitalize='none'
+                />
+                <View style={styles.passwordInput}>
+                    <TextInput
+                        style={styles.textInput}
+                        value={password}
+                        onChangeText={text => setPassword(text)}
+                        placeholder={'Password'}
+                        secureTextEntry={!passwordShow}
+                        selectionColor={Colors.primaryColor}
+                        autoCapitalize='none'
+                    />
+                    <Ionicons name={passwordIcon} size={25} style={styles.showPasswordIcon}
+                        onPress={() => {
+                            passwordIcon === 'md-eye' ? setPasswordIcon('md-eye-off') : setPasswordIcon('md-eye');
+                            setPasswordShow(!passwordShow);
+                        }}></Ionicons>
+                </View>
+                {submitButton}
+            </View>
+        </KeyboardAvoidingView>
     );
 }
 
 LoginScreen.navigationOptions = navData => {
     return {
-        headerTitle: 'Log In',
+        headerTitle: 'Login',
         headerLeft: <Ionicons style={styles.headerLeft} name="md-menu" size={25} color={Colors.accentColor}
-            onPress={() => navData.navigation.toggleDrawer()}></Ionicons> 
+            onPress={() => navData.navigation.toggleDrawer()}></Ionicons>
     }
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: Colors.accentColor,
+        alignItems: "center",
+        paddingVertical: 10
+    },
+    header: {
+        paddingVertical: 15
+    },
+    logoText: {
+        color: Colors.accentColor,
+        backgroundColor: Colors.primaryColor,
+        padding: 15,
+        marginBottom: 20,
+        fontSize: 34,
+        textAlign: 'center',
+        borderRadius: 10,
+        shadowColor: 'black',
+        shadowOpacity: 0.35,
+        shadowOffset: { width: 3, height: 4 },
+        shadowRadius: 10,
+        elevation: 6
+    },
+    headerText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    form: {
+        width: "80%"
+    },
+    textInput: {
+        width: '100%',
+        height: 40,
+        borderColor: 'gray',
+        borderBottomWidth: 1,
+        marginBottom: 20
+    },
+    passwordInput: {
+        // width: '100%',
+        flexDirection: 'row'
+    },
+    showPasswordIcon: {
+        position: 'absolute',
+        top: 10,
+        right: 0
+    },
     headerLeft: {
         paddingLeft: 10
     }

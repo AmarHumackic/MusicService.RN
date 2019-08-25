@@ -19,6 +19,14 @@ const TopTracksScreen = props => {
     let tracks = useSelector(state => state.tracks.tracks);
     let error = useSelector(state => state.tracks.error);
 
+
+
+    let username = useSelector(state => state.auth.username);
+    let sessionKey = useSelector(state => state.auth.sessionKey);
+    alert(username);
+    console.log(username + ' ' + sessionKey);
+
+
     if (loading) {
         tracksOutput = (
             <View style={styles.activityIndicator}>
