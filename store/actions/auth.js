@@ -11,11 +11,12 @@ export const authStart = () => {
     };
 };
 
-export const authSuccess = (username, sessionKey) => {
+export const authSuccess = (username, sessionKey, api_sig) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
         username: username,
-        sessionKey: sessionKey
+        sessionKey: sessionKey,
+        api_sig: api_sig
     };
 };
 
@@ -28,33 +29,34 @@ export const authFail = (error) => {
 
 export const auth = (username, password) => {
     return async dispatch => {
-        // let username = 'humast';
-        // let password = 'l4mp3rij4  ';
         dispatch(authStart());
-        let api_sig = 'api_key' + API_KEY + 'methodauth.getMobileSessionpassword' + password +
+        let api_sigStr = 'api_key' + API_KEY + 'methodauth.getMobileSessionpassword' + password +
             'username' + username + SHARED_SECRET;
-        const digest = await Crypto.digestStringAsync(
+        const api_sig = await Crypto.digestStringAsync(
             Crypto.CryptoDigestAlgorithm.MD5,
-            api_sig
+            api_sigStr
         );
-        console.log('api_sig: ' + api_sig);
-        console.log('Digest: ', digest);
+        console.log('api_sig: ' + api_sigStr);
+        console.log('Digest: ', api_sig);
 
-        const url = `https://ws.audioscrobbler.com/2.0/?method=auth.getMobileSession&password=${password}&username=${username}&api_key=${API_KEY}&api_sig=${digest}&format=json`;
+        const url = `https://ws.audioscrobbler.com/2.0/?method=auth.getMobileSession&password=${password}&username=${username}&api_key=${API_KEY}&api_sig=${api_sig}&format=json`;
         console.log(url);
         Axios.post(url).then(response => {
             console.log('mobileauth');
             console.log(response);
             AsyncStorage.setItem('username', response.data.session.name).then(json => {
                 AsyncStorage.setItem('sessionKey', response.data.session.key).then(json => {
-                    dispatch(authSuccess(response.data.session.name, response.data.session.key));
+                    AsyncStorage.setItem('api_sig', api_sig).then(json => {
+                        dispatch(authSuccess(response.data.session.name, response.data.session.key, api_sig));
+                        console.log('api_sig setted: ' + api_sig);
+                    })
                 });
             }).catch(err => {
                 alert(err.message);
             });
         }).catch(error => {
-            dispatch(authFail(error));
             alert(error.message);
+            dispatch(authFail(error));
         });
 
 
@@ -65,6 +67,7 @@ export const clearStorage = () => {
     return dispatch => {
         AsyncStorage.removeItem('username');
         AsyncStorage.removeItem('sessionKey');
+        AsyncStorage.removeItem('api_sig');
     };
 };
 
@@ -81,3 +84,9 @@ export const logout = () => {
     };
 }
 
+export const setAuthRedirectPath = (path) => {
+    return {
+        type: actionTypes.SET_AUTH_REDIRECT_PATH,
+        path: path
+    };
+};

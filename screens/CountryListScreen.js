@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Keyboard, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -12,7 +12,7 @@ const CountryListScreen = props => {
     useEffect(() => {
         dispatch(fetchCountries());
     }, 0);
-    
+
     let countriesOutput = null;
 
     let loading = useSelector(state => state.countryList.loading);

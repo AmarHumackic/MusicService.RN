@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchTracks } from '../store/actions/tracks';
+import { fetchTracks, toggleLove } from '../store/actions/tracks';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 
@@ -18,14 +18,7 @@ const TopTracksScreen = props => {
     let loading = useSelector(state => state.tracks.loading);
     let tracks = useSelector(state => state.tracks.tracks);
     let error = useSelector(state => state.tracks.error);
-
-
-
-    let username = useSelector(state => state.auth.username);
     let sessionKey = useSelector(state => state.auth.sessionKey);
-    alert(username);
-    console.log(username + ' ' + sessionKey);
-
 
     if (loading) {
         tracksOutput = (
@@ -37,7 +30,7 @@ const TopTracksScreen = props => {
         tracksOutput = <Text style={styles.error}>{error.message}</Text>;
     } else {
         if (tracks.length === 0) {
-            tracksOutput = <Text>There is no tracks for {countryName}.</Text>;
+            tracksOutput = <Text style={[styles.error, { color: 'black' }]}>There is no tracks for {countryName}.</Text>;
         } else {
             tracksOutput = tracks.map((track, index) => {
                 return (
@@ -55,7 +48,7 @@ const TopTracksScreen = props => {
                                     <Text style={styles.text}>Track: {track.trackName}</Text>
                                 </View>
                                 <View style={styles.love}>
-                                    <TouchableOpacity onPress={() => alert('Loved')}>
+                                    <TouchableOpacity onPress={() => dispatch(toggleLove(track.trackName, track.artistName, sessionKey))}>
                                         <Ionicons name="md-heart-empty" size={40} color={Colors.primaryColor}></Ionicons>
                                     </TouchableOpacity>
                                 </View>
@@ -127,7 +120,9 @@ const styles = StyleSheet.create({
         marginTop: Dimensions.get("window").height / 2 - 40
     },
     error: {
-        color: 'red'
+        color: 'red',
+        fontWeight: 'bold',
+        marginTop: Dimensions.get("window").height / 2 - 40
     }
 
 })

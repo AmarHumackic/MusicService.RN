@@ -30,8 +30,13 @@ const Navigation = props => {
                 AsyncStorage.getItem('sessionKey').then(sessionKey => {
                     console.log(sessionKey);
                     if (sessionKey) {
-                        dispatch(authSuccess(username, sessionKey));
-                        console.log('session checked true');
+                        AsyncStorage.getItem('api_sig').then(api_sig => {
+                            console.log(api_sig);
+                            if(api_sig) {
+                                dispatch(authSuccess(username, sessionKey, api_sig));
+                                console.log('session checked true');
+                            }
+                        });
                     }
                 });
             }
@@ -55,10 +60,9 @@ const Navigation = props => {
 
 const defaultStackNavOptions = {
     headerStyle: {
-        backgroundColor: Colors.primaryColor
+        backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : ''
     },
-    headerTintColor: Colors.accentColor,
-    headerTitle: 'A Screen'
+    headerTintColor: Platform.OS === 'android' ? 'white' : Colors.primaryColor
 };
 
 const CountryTracksNavigator = createStackNavigator(
@@ -109,10 +113,10 @@ const CountryLovedTabNavigator = createBottomTabNavigator(
     },
     {
         tabBarOptions: {
-            activeTintColor: Colors.accentColor,
+            activeTintColor: Platform.OS === 'android' ? Colors.accentColor : Colors.primaryColor,
             inactiveTintColor: Colors.secondaryColor,
             style: {
-                backgroundColor: Colors.primaryColor
+                backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : ''
             }
         }
     }

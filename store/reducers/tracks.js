@@ -2,6 +2,7 @@ import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
     tracks: [],
+    loved: [],
     details: null,
     loading: false,
     error: null
@@ -31,6 +32,19 @@ const fetchDetailsFail = (state, action) => {
     return { ...state, loading: false, error: action.error };
 }
 
+const fetchLovedStart = (state, action) => {
+    return { ...state, loading: true };
+};
+
+const fetchLovedSuccess = (state, action) => {
+    return { ...state, loading: false, loved: action.lovedTracks, error: null };
+}
+
+const fetchLovedFail = (state, action) => {
+    return { ...state, loading: false, error: action.error };
+}
+
+
 const reducer = (state = initialState, action) => {
     switch(action.type) {
         case(actionTypes.FETCH_TRACKS_START): return fetchTracksStart(state, action);
@@ -39,6 +53,9 @@ const reducer = (state = initialState, action) => {
         case(actionTypes.FETCH_DETAILS_START): return fetchDetailsStart(state, action);
         case(actionTypes.FETCH_DETAILS_SUCCESS): return fetchDetailsSuccess(state, action);
         case(actionTypes.FETCH_DETAILS_FAIL): return fetchDetailsFail(state, action);
+        case(actionTypes.FETCH_LOVED_START): return fetchLovedStart(state, action);
+        case(actionTypes.FETCH_LOVED_SUCCESS): return fetchLovedSuccess(state, action);
+        case(actionTypes.FETCH_LOVED_FAIL): return fetchLovedFail(state, action);
         default: return state;
     }
 };

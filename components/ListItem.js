@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ImageBackground
+  Dimensions
 } from 'react-native';
 
 // import SvgUri from "expo-svg-uri";
@@ -50,66 +50,38 @@ const ListItem = props => {
 
 const styles = StyleSheet.create({
   listItem: {
-    height: 200,
-    width: '100%',
-    borderRadius: 10,
+    height: 120,
+    width: '49%',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 3,
     overflow: 'hidden',
     marginTop: 10,
+    marginHorizontal: 2,
     alignItems: 'center'
   },
   item: {
-    width: '100%',
     height: '100%',
+    width: '100%'
   },
   bgImage: {
-    width: '100%',
-    height: '80%'
+    height: '80%',
+    width: '100%'
   },
   svg: {
-    width: 300,
-    height: 200
+    height: 100,
+    width: Dimensions.get('window').width / 2
   },
   titleContainer: {
+    height: '20%',
+    width: Dimensions.get('window').width / 2,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    paddingVertical: 5,
-    paddingHorizontal: 12
+    paddingVertical: 5
   },
   title: {
-    fontSize: 18,
+    fontSize: 12,
     color: 'white',
     textAlign: 'center'
   }
-  // listItem: {
-  //   height: 200,
-  //   width: '100%',
-  //   backgroundColor: '#f5f5f5',
-  //   borderRadius: 10,
-  //   overflow: 'hidden',
-  //   marginVertical: 10
-  // },
-  // bgImage: {
-  //   width: '100%',
-  //   height: '100%',
-  //   // justifyContent: 'flex-end',
-  //   position: 'absolute'
-  // },
-  // listRow: {
-  //   // flexDirection: 'row'
-  //   flexDirection: 'column',
-  // },
-  // listHeader: {
-  //   height: '100%'
-  // },
-  // titleContainer: {
-  //   backgroundColor: 'rgba(0,0,0,0.5)',
-  //   paddingVertical: 5,
-  //   paddingHorizontal: 12
-  // },
-  // title: {
-  //   fontSize: 20,
-  //   color: 'white',
-  //   textAlign: 'center'
-  // }
 });
 
 export default ListItem;

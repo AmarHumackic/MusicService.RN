@@ -28,12 +28,11 @@ const CountryList = props => {
     };
 
     const renderHeader = () => {
-        return (
+        return arrayHolder ? (
             <SearchBar placeholder="Search countries..." lightTheme autoCorrect={true}
                 value={searchValue} onChangeText={text => searchFilterHandler(text)}
                 style={{ width: '100%' }} platform={Platform.OS === 'ios' ? 'ios' : 'android'}
-            ></SearchBar>
-        );
+            ></SearchBar> ) : null;
     };
 
     const renderListItem = itemData => {
@@ -63,36 +62,22 @@ const CountryList = props => {
 
     return (
         <View style={styles.container}>
-            <FlatList data={data} keyExtractor={(info, index) => index.toString()}
+            <FlatList data={data} numColumns={2} keyExtractor={(info, index) => index.toString()}
                 renderItem={renderListItem} style={styles.flatList}
                 ListHeaderComponent={renderHeader} />
         </View>
     );
-    // }
 };
 
 const styles = StyleSheet.create({
     container: {
-        // flex: 1
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        // paddingTop: 15
-    },
-    searchContainer: {
-        flexDirection: 'row',
-        width: '100%'
+        width: '100%',
+        flex: 1,
+        alignItems: 'center'
     },
     flatList: {
-        width: '100%'
-    },
-    textInput: {
-        width: '70%',
-        borderBottomColor: Colors.secondaryColor,
-        borderBottomWidth: 1,
-        paddingHorizontal: 25
-    },
-    searchButton: {
-        width: '30%'
+        width: '95%',
+        paddingHorizontal: 2
     }
 });
 
