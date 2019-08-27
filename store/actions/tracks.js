@@ -24,13 +24,13 @@ export const fetchTracksFail = (error) => {
     };
 };
 
-export const fetchTracks = (countryName) => {
+export const fetchTracks = (countryName, limit, page) => {
     return dispatch => {
         console.log(encodeURIComponent(countryName));
         const countryNameEnc = encodeURIComponent(countryName).replace(/\(/g, '%28').replace(/\)/g, '%29');
         console.log(countryNameEnc);
         dispatch(fetchTracksStart());
-        Axios.get(`http://ws.audioscrobbler.com/2.0/?method=geo.gettoptracks&country=${countryNameEnc}&api_key=${API_KEY}&format=json`).then(response => {
+        Axios.get(`http://ws.audioscrobbler.com/2.0/?method=geo.gettoptracks&country=${countryNameEnc}&api_key=${API_KEY}&format=json&limit=${limit}&page=${page}`).then(response => {
             if (response.data.error === 6) {
                 response.data.message = 'Can\'t load tracks for ' + countryName + '.';
                 dispatch(fetchTracksFail(response.data));

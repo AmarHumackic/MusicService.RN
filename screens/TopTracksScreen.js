@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchTracks, toggleLove } from '../store/actions/tracks';
@@ -18,14 +18,16 @@ const checkContains = (arr, obj) => {
 }
 
 const TopTracksScreen = props => {
+    const [currentPage, setCurrentPage] = useState(1);
     const countryName = props.navigation.getParam('name');
 
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(fetchTracks(countryName));
-    }, [loved]);
+        dispatch(fetchTracks(countryName, 30, currentPage));
+    }, [loved, currentPage]);
 
     let tracksOutput = null;
+    let paginationFooter = null;
 
     let loading = useSelector(state => state.tracks.loading);
     let tracks = useSelector(state => state.tracks.tracks);
@@ -66,25 +68,42 @@ const TopTracksScreen = props => {
                                     <Text style={styles.text}>Track: {track.trackName}</Text>
                                 </View>
                                 {loved.some(tr => tr.artistName === track.artistName && tr.trackName === track.trackName) ?
-                                <View style={styles.love}>
-                                    <TouchableOpacity onPress={() => dispatch(toggleLove(track.artistName, track.trackName, sessionKey, 'unlove'))}>
-                                        <Ionicons name={'md-heart'}
-                                            size={40} color={Colors.primaryColor}></Ionicons>
-                                    </TouchableOpacity>
-                                </View>
-                                :
-                                <View style={styles.love}>
-                                    <TouchableOpacity onPress={() => dispatch(toggleLove(track.artistName, track.trackName, sessionKey, 'love'))}>
-                                        <Ionicons name={'md-heart-empty'}
-                                            size={40} color={Colors.primaryColor}></Ionicons>
-                                    </TouchableOpacity>
-                                </View>
+                                    <View style={styles.love}>
+                                        <TouchableOpacity onPress={() => dispatch(toggleLove(track.artistName, track.trackName, sessionKey, 'unlove'))}>
+                                            <Ionicons name={'md-heart'}
+                                                size={40} color={Colors.primaryColor}></Ionicons>
+                                        </TouchableOpacity>
+                                    </View>
+                                    :
+                                    <View style={styles.love}>
+                                        <TouchableOpacity onPress={() => dispatch(toggleLove(track.artistName, track.trackName, sessionKey, 'love'))}>
+                                            <Ionicons name={'md-heart-empty'}
+                                                size={40} color={'black'}></Ionicons>
+                                        </TouchableOpacity>
+                                    </View>
                                 }
                             </View>
                         </TouchableOpacity>
                     </View >
                 );
             })
+            paginationFooter = (
+                <View style={styles.paginationContainer}>
+                    <TouchableOpacity onPress={() => setCurrentPage(currentPage - 1)}>
+                        <View style={styles.paginationItemLeft}>
+                            <Text style={styles.paginationText}>Previous</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <View style={styles.paginationCurrentPage}>
+                        <Text style={styles.paginationText}>{currentPage}</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => setCurrentPage(currentPage + 1)}>
+                        <View style={styles.paginationItemRight}>
+                            <Text style={styles.paginationText}>Next</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            );
         }
     }
 
@@ -92,6 +111,7 @@ const TopTracksScreen = props => {
         <ScrollView>
             <View style={styles.container}>
                 {tracksOutput}
+                {paginationFooter}
             </View>
         </ScrollView>
     );
@@ -151,6 +171,44 @@ const styles = StyleSheet.create({
         color: 'red',
         fontWeight: 'bold',
         marginTop: Dimensions.get("window").height / 2 - 40
+    },
+    paginationContainer: {
+        width: '100%',
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'baseline',
+        justifyContent: 'space-around',
+        paddingTop: 5,
+        paddingBottom: 10
+    },
+    paginationItemLeft: {
+        backgroundColor: 'lightseagreen',
+        padding: 5,
+        width: 100,
+        // height: 40,
+        borderBottomLeftRadius: 20,
+        borderTopLeftRadius: 20
+    },
+    paginationItemRight: {
+        backgroundColor: 'lightseagreen',
+        padding: 5,
+        width: 100,
+        // height: 40,
+        borderBottomRightRadius: 20,
+        borderTopRightRadius: 20
+    },
+    paginationCurrentPage: {
+        backgroundColor: 'lightseagreen',
+        padding: 5,
+        width: 40,
+        // height: 40,
+    },
+    paginationText: {
+        padding: 5,
+        fontWeight: 'bold',
+        color: 'white',
+        textAlign: 'center',
+        fontSize: 14
     }
 
 })
