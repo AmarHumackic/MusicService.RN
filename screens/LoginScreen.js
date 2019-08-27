@@ -48,7 +48,7 @@ const LoginScreen = props => {
         </ButtonWithBackground>
     );
     if (loading) {
-        submitButton = <ActivityIndicator></ActivityIndicator>;
+        submitButton = <ActivityIndicator color={Colors.primaryColor}></ActivityIndicator>;
     }
     return (
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps={'handled'}>

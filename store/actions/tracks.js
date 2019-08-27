@@ -73,6 +73,8 @@ export const fetchDetailsFail = (error) => {
 export const fetchDetails = (artistName, trackName) => {
     return dispatch => {
         dispatch(fetchDetailsStart());
+
+        console.log(`http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${API_KEY}&artist=${artistName}&track=${trackName}&format=json`);
         Axios.get(`http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${API_KEY}&artist=${artistName}&track=${trackName}&format=json`).then(response => {
             const track = {
                 album: response.data.track.album,
@@ -144,30 +146,19 @@ export const setToogleLove = (artistName, trackName, typeLove) => {
 
 export const toggleLove = (artistName, trackName, sessionKey, typeLove) => {
     return async dispatch => {
-        console.log('toggleLove function');
-        console.log(artistName + ' ' + trackName + ' ' + typeLove);
-        const trackNameEnc = encodeURIComponent(trackName);
-        const artistNameEnc = encodeURIComponent(artistName);
+        const trackNameEnc = decodeURIComponent(escape(trackName));
+        const artistNameEnc = decodeURIComponent(escape(artistName));
+
         let api_sigStr = `api_key${API_KEY}artist${artistNameEnc}methodtrack.${typeLove}sk${sessionKey}track${trackNameEnc}${SHARED_SECRET}`;
         const api_sig = await Crypto.digestStringAsync(
             Crypto.CryptoDigestAlgorithm.MD5,
             api_sigStr
         );
 
-        console.log('api_sig: ' + api_sigStr);
-        console.log('Digest: ', api_sig);
-
-        let url = `https://ws.audioscrobbler.com/2.0/?method=track.${typeLove}&track=${trackNameEnc}&artist=${artistNameEnc}&api_key=${API_KEY}&api_sig=${api_sig}&sk=${sessionKey}&format=json`;
-        console.log(url);
+        let url = `https://ws.audioscrobbler.com/2.0/?method=track.${typeLove}&track=${escape(trackName)}&artist=${escape(artistName)}&api_key=${API_KEY}&api_sig=${api_sig}&sk=${sessionKey}&format=json`;
         Axios.post(url).then(response => {
-            console.log('track got toogled');
-            console.log(response);
             dispatch(setToogleLove(artistName, trackName, typeLove));
-            
         }).catch(error => {
-            console.log(error.message);
-            console.log(error.error);
-            console.log(error);
             alert(error.message);
         });
     }

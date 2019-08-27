@@ -10,7 +10,12 @@ import CountryList from '../components/CountryList';
 const CountryListScreen = props => {
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(fetchCountries());
+        if (countries.length === 0) {
+            console.log('fetcha drzave u CountryListScreenu');
+            dispatch(fetchCountries());
+        } else {
+            console.log('NE fetcha drzave u CountryListScreenu');
+        }
     }, 0);
 
     let countriesOutput = null;
@@ -20,7 +25,7 @@ const CountryListScreen = props => {
     let error = useSelector(state => state.countryList.error);
 
     if (loading) {
-        countriesOutput = <ActivityIndicator size="large"></ActivityIndicator>;
+        countriesOutput = <ActivityIndicator size="large" color={Colors.primaryColor}></ActivityIndicator>;
     } else if (error) {
         countriesOutput = <Text>{error.message}</Text>;
     } else {

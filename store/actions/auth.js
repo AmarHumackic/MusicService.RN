@@ -55,7 +55,7 @@ export const auth = (username, password) => {
                 alert(err.message);
             });
         }).catch(error => {
-            alert(error.message);
+            alert('Invalid username or password.');
             dispatch(authFail(error));
         });
 

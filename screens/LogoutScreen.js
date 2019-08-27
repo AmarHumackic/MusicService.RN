@@ -21,7 +21,7 @@ class LogoutScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <ActivityIndicator></ActivityIndicator>
+                <ActivityIndicator size={'large'} color={Colors.primaryColor}></ActivityIndicator>
             </View>
         );
     }

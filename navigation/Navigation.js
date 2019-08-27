@@ -16,6 +16,7 @@ import LogoutScreen from '../screens/LogoutScreen';
 import Colors from '../constants/Colors';
 import { authSuccess } from '../store/actions/auth';
 import { fetchLoved } from '../store/actions/tracks';
+import { fetchCountries } from '../store/actions/countryList';
 import Logo from '../assets/logo.png';
 
 const Navigation = props => {

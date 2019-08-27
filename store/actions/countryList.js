@@ -28,6 +28,7 @@ export const fetchCountries = () => {
         AsyncStorage.getItem('countries').then(req => JSON.parse(req)).then(json => {
             countries = json;
             if (countries) {
+                console.log('drzave postojale u asyncstorage')
                 dispatch(fetchCountriesSuccess(countries));
             } else {
                 dispatch(fetchCountriesStart());

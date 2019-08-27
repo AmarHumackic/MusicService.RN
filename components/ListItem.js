@@ -8,9 +8,6 @@ import {
   Platform
 } from 'react-native';
 
-// import SvgUri from "expo-svg-uri";
-// import Image from 'react-native-remote-svg'
-// import { Svg, Image } from 'react-native-svg';
 import SVGImage from 'react-native-svg-image';
 
 const ListItem = props => {

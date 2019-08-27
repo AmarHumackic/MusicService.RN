@@ -27,18 +27,7 @@ const CountryList = props => {
         setData(newData);
     };
 
-    // const renderHeader = () => {
-
-    //     return arrayHolder ? (
-    //         <SearchBar round placeholder="Search countries..." lightTheme
-    //             value={searchValue} onChangeText={text => searchFilterHandler(text)} 
-    //             onClear={text => searchFilterHandler('')}
-    //             style={{ width: '100%' }} platform={Platform.OS === 'ios' ? 'ios' : 'android'}
-    //         ></SearchBar>) : null;
-    // };
-
     const renderListItem = itemData => {
-
         return (
             <ListItem
                 title={itemData.item.name}
@@ -57,7 +46,7 @@ const CountryList = props => {
     if (!props.countries) {
         return (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <ActivityIndicator></ActivityIndicator>
+                <ActivityIndicator color={Colors.primaryColor}></ActivityIndicator>
             </View>
         );
     }
