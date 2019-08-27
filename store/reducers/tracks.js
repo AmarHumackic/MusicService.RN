@@ -44,18 +44,32 @@ const fetchLovedFail = (state, action) => {
     return { ...state, loading: false, error: action.error };
 }
 
+const setToogleLove = (state, action) => {
+    if (action.typeLove === 'love') {
+        const newTrack = { artistName: action.artistName, trackName: action.trackName };
+        //adding item at the start of the array
+        console.log('new track ' + newTrack);
+        return { ...state, loved: [newTrack, ...state.loved] };
+    } else if(action.typeLove === 'unlove') {
+        const newLoved = state.loved.filter(item => item.artistName !== action.artistName || item.trackName !== action.trackName);
+        console.log('removed track ' + newLoved);
+        return { ...state, loved: newLoved };
+    }
+}
+
 
 const reducer = (state = initialState, action) => {
-    switch(action.type) {
-        case(actionTypes.FETCH_TRACKS_START): return fetchTracksStart(state, action);
-        case(actionTypes.FETCH_TRACKS_SUCCESS): return fetchTracksSuccess(state, action);
-        case(actionTypes.FETCH_TRACKS_FAIL): return fetchTracksFail(state, action);
-        case(actionTypes.FETCH_DETAILS_START): return fetchDetailsStart(state, action);
-        case(actionTypes.FETCH_DETAILS_SUCCESS): return fetchDetailsSuccess(state, action);
-        case(actionTypes.FETCH_DETAILS_FAIL): return fetchDetailsFail(state, action);
-        case(actionTypes.FETCH_LOVED_START): return fetchLovedStart(state, action);
-        case(actionTypes.FETCH_LOVED_SUCCESS): return fetchLovedSuccess(state, action);
-        case(actionTypes.FETCH_LOVED_FAIL): return fetchLovedFail(state, action);
+    switch (action.type) {
+        case (actionTypes.FETCH_TRACKS_START): return fetchTracksStart(state, action);
+        case (actionTypes.FETCH_TRACKS_SUCCESS): return fetchTracksSuccess(state, action);
+        case (actionTypes.FETCH_TRACKS_FAIL): return fetchTracksFail(state, action);
+        case (actionTypes.FETCH_DETAILS_START): return fetchDetailsStart(state, action);
+        case (actionTypes.FETCH_DETAILS_SUCCESS): return fetchDetailsSuccess(state, action);
+        case (actionTypes.FETCH_DETAILS_FAIL): return fetchDetailsFail(state, action);
+        case (actionTypes.FETCH_LOVED_START): return fetchLovedStart(state, action);
+        case (actionTypes.FETCH_LOVED_SUCCESS): return fetchLovedSuccess(state, action);
+        case (actionTypes.FETCH_LOVED_FAIL): return fetchLovedFail(state, action);
+        case (actionTypes.SET_TOOGLE_LOVE): return setToogleLove(state, action);
         default: return state;
     }
 };

@@ -4,7 +4,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
+  Platform
 } from 'react-native';
 
 // import SvgUri from "expo-svg-uri";
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
     width: '49%',
     backgroundColor: '#f5f5f5',
     borderRadius: 3,
-    overflow: 'hidden',
+    overflow: Platform.OS === 'android' && Platform.Version >= 21 ? 'hidden' : 'visible',
     marginTop: 10,
     marginHorizontal: 2,
     alignItems: 'center'

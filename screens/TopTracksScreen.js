@@ -5,18 +5,31 @@ import { fetchTracks, toggleLove } from '../store/actions/tracks';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 
+
+const checkContains = (arr, obj) => {
+    arr.forEach(element => {
+        if (element.artistName === obj.artistName && element.trackName === obj.trackName) {
+            console.log('contains function');
+            console.log(true);
+            return true;
+        }
+    });
+    return false;
+}
+
 const TopTracksScreen = props => {
     const countryName = props.navigation.getParam('name');
 
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(fetchTracks(countryName));
-    }, 0);
+    }, [loved]);
 
     let tracksOutput = null;
 
     let loading = useSelector(state => state.tracks.loading);
     let tracks = useSelector(state => state.tracks.tracks);
+    let loved = useSelector(state => state.tracks.loved);
     let error = useSelector(state => state.tracks.error);
     let sessionKey = useSelector(state => state.auth.sessionKey);
 
@@ -32,6 +45,9 @@ const TopTracksScreen = props => {
         if (tracks.length === 0) {
             tracksOutput = <Text style={[styles.error, { color: 'black' }]}>There is no tracks for {countryName}.</Text>;
         } else {
+            console.log(tracks);
+            console.log('--------');
+            console.log(loved);
             tracksOutput = tracks.map((track, index) => {
                 return (
                     <View style={styles.headContainer} key={index}>
@@ -39,7 +55,9 @@ const TopTracksScreen = props => {
                             routeName: 'Details',
                             params: {
                                 artist: track.artistName,
-                                track: track.trackName
+                                track: track.trackName,
+                                sessionKey: sessionKey,
+                                typeLove: loved.some(tr => tr.artistName === track.artistName && tr.trackName === track.trackName) ? 'unlove' : 'love'
                             }
                         })}>
                             <View style={styles.itemContainer}>
@@ -47,11 +65,21 @@ const TopTracksScreen = props => {
                                     <Text style={styles.text}>Artist: {track.artistName}</Text>
                                     <Text style={styles.text}>Track: {track.trackName}</Text>
                                 </View>
+                                {loved.some(tr => tr.artistName === track.artistName && tr.trackName === track.trackName) ?
                                 <View style={styles.love}>
-                                    <TouchableOpacity onPress={() => dispatch(toggleLove(track.trackName, track.artistName, sessionKey))}>
-                                        <Ionicons name="md-heart-empty" size={40} color={Colors.primaryColor}></Ionicons>
+                                    <TouchableOpacity onPress={() => dispatch(toggleLove(track.artistName, track.trackName, sessionKey, 'unlove'))}>
+                                        <Ionicons name={'md-heart'}
+                                            size={40} color={Colors.primaryColor}></Ionicons>
                                     </TouchableOpacity>
                                 </View>
+                                :
+                                <View style={styles.love}>
+                                    <TouchableOpacity onPress={() => dispatch(toggleLove(track.artistName, track.trackName, sessionKey, 'love'))}>
+                                        <Ionicons name={'md-heart-empty'}
+                                            size={40} color={Colors.primaryColor}></Ionicons>
+                                    </TouchableOpacity>
+                                </View>
+                                }
                             </View>
                         </TouchableOpacity>
                     </View >
@@ -90,7 +118,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         borderRadius: 10,
         shadowColor: 'black',
-        shadowOpacity: 0.26,
+        shadowOpacity: 0.25,
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 10,
         elevation: 3

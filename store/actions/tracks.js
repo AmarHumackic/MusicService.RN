@@ -133,13 +133,22 @@ export const fetchLoved = (username) => {
     }
 }
 
-export const toggleLove = (trackName, artistName, sessionKey) => {
+export const setToogleLove = (artistName, trackName, typeLove) => {
+    return {
+        type: actionTypes.SET_TOOGLE_LOVE,
+        artistName: artistName,
+        trackName: trackName,
+        typeLove: typeLove
+    };
+}
+
+export const toggleLove = (artistName, trackName, sessionKey, typeLove) => {
     return async dispatch => {
         console.log('toggleLove function');
+        console.log(artistName + ' ' + trackName + ' ' + typeLove);
         const trackNameEnc = encodeURIComponent(trackName);
         const artistNameEnc = encodeURIComponent(artistName);
-        let api_sigStr = 'api_key' + API_KEY + 'artist' + artistNameEnc + 'methodtrack.lovesk' + sessionKey +
-            'track' + trackNameEnc + SHARED_SECRET;
+        let api_sigStr = `api_key${API_KEY}artist${artistNameEnc}methodtrack.${typeLove}sk${sessionKey}track${trackNameEnc}${SHARED_SECRET}`;
         const api_sig = await Crypto.digestStringAsync(
             Crypto.CryptoDigestAlgorithm.MD5,
             api_sigStr
@@ -148,19 +157,13 @@ export const toggleLove = (trackName, artistName, sessionKey) => {
         console.log('api_sig: ' + api_sigStr);
         console.log('Digest: ', api_sig);
 
-
-        const url = `https://ws.audioscrobbler.com/2.0/?method=track.love&track=${trackNameEnc}&artist=${artistNameEnc}&api_key=${API_KEY}&api_sig=${api_sig}&sk=${sessionKey}&format=json`;
+        let url = `https://ws.audioscrobbler.com/2.0/?method=track.${typeLove}&track=${trackNameEnc}&artist=${artistNameEnc}&api_key=${API_KEY}&api_sig=${api_sig}&sk=${sessionKey}&format=json`;
         console.log(url);
         Axios.post(url).then(response => {
-            console.log('track got loved');
+            console.log('track got toogled');
             console.log(response);
-            // AsyncStorage.setItem('username', response.data.session.name).then(json => {
-            //     AsyncStorage.setItem('sessionKey', response.data.session.key).then(json => {
-            //         dispatch(authSuccess(response.data.session.name, response.data.session.key));
-            //     });
-            // }).catch(err => {    
-            //     alert(err.message);
-            // });
+            dispatch(setToogleLove(artistName, trackName, typeLove));
+            
         }).catch(error => {
             console.log(error.message);
             console.log(error.error);
@@ -168,31 +171,4 @@ export const toggleLove = (trackName, artistName, sessionKey) => {
             alert(error.message);
         });
     }
-}
-
-const toUTF8Array = (str) => {
-    var utf8 = [];
-    for (var i = 0; i < str.length; i++) {
-        var charcode = str.charCodeAt(i);
-        if (charcode < 0x80) utf8.push(charcode);
-        else if (charcode < 0x800) {
-            utf8.push(0xc0 | (charcode >> 6),
-                0x80 | (charcode & 0x3f));
-        }
-        else if (charcode < 0xd800 || charcode >= 0xe000) {
-            utf8.push(0xe0 | (charcode >> 12),
-                0x80 | ((charcode >> 6) & 0x3f),
-                0x80 | (charcode & 0x3f));
-        }
-        // surrogate pair
-        else {
-            i++;
-            charcode = ((charcode & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff)
-            utf8.push(0xf0 | (charcode >> 18),
-                0x80 | ((charcode >> 12) & 0x3f),
-                0x80 | ((charcode >> 6) & 0x3f),
-                0x80 | (charcode & 0x3f));
-        }
-    }
-    return utf8;
 }

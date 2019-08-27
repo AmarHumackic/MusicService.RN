@@ -1,18 +1,40 @@
-import React, { useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, FlatList, Linking } from 'react-native';
+import React, { useEffect, useCallback, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, FlatList, Linking, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
-import { fetchDetails } from '../store/actions/tracks';
+import { fetchDetails, toggleLove } from '../store/actions/tracks';
 
 const DetailsScreen = props => {
     const artistName = props.navigation.getParam('artist');
     const trackName = props.navigation.getParam('track');
+    const sessionKey = props.navigation.getParam('sessionKey');
+    let typeLove = props.navigation.getParam('typeLove');
 
     const dispatch = useDispatch();
+
+    const toggleLoveHandler = useCallback(() => {
+        dispatch(toggleLove(artistName, trackName, sessionKey, typeLove));
+        
+        typeLove = typeLove === 'love' ? 'unlove' : 'love';
+        props.navigation.setParams({ typeLove: typeLove });
+
+    }, [dispatch, artistName, trackName]);
+
+    useEffect(() => {
+        props.navigation.setParams({ toogleLoveHeader: toggleLoveHandler });
+        console.log('useEffect prvi');
+    }, [toggleLoveHandler]);
+
     useEffect(() => {
         dispatch(fetchDetails(artistName, trackName));
     }, 0);
+
+    // useEffect(() => {
+    //     console.log('useEffect typeLove');
+    //     props.navigation.setParams({ typeLove: typeLove });
+
+    // }, [typeLove])
 
     let detailsOutput = null;
 
@@ -93,10 +115,12 @@ const DetailsScreen = props => {
 
 DetailsScreen.navigationOptions = navData => {
     const trackName = navData.navigation.getParam('track');
-
+    let typeLove = navData.navigation.getParam('typeLove');
+    const toogleLoveHeader = navData.navigation.getParam('toogleLoveHeader');
     return {
         headerTitle: trackName,
-        headerRight: <Ionicons style={styles.headerRight} name="md-heart-empty" size={25} color={Colors.accentColor}></Ionicons>
+        headerRight:<Ionicons style={styles.headerRight} name={typeLove === 'love' ? 'md-heart-empty' : 'md-heart'}
+                size={30} color={Colors.accentColor} onPress={toogleLoveHeader}></Ionicons>
     };
 };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, Platform, Image, ScrollView } from 'react-native';
+import { View, StyleSheet, FlatList, ActivityIndicator, Platform, Keyboard } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 
 import Colors from '../constants/Colors';
@@ -27,13 +27,15 @@ const CountryList = props => {
         setData(newData);
     };
 
-    const renderHeader = () => {
-        return arrayHolder ? (
-            <SearchBar placeholder="Search countries..." lightTheme autoCorrect={true}
-                value={searchValue} onChangeText={text => searchFilterHandler(text)}
-                style={{ width: '100%' }} platform={Platform.OS === 'ios' ? 'ios' : 'android'}
-            ></SearchBar> ) : null;
-    };
+    // const renderHeader = () => {
+
+    //     return arrayHolder ? (
+    //         <SearchBar round placeholder="Search countries..." lightTheme
+    //             value={searchValue} onChangeText={text => searchFilterHandler(text)} 
+    //             onClear={text => searchFilterHandler('')}
+    //             style={{ width: '100%' }} platform={Platform.OS === 'ios' ? 'ios' : 'android'}
+    //         ></SearchBar>) : null;
+    // };
 
     const renderListItem = itemData => {
 
@@ -62,9 +64,11 @@ const CountryList = props => {
 
     return (
         <View style={styles.container}>
+            <SearchBar placeholder="Search countries..." lightTheme value={searchValue} style={styles.flatList}
+                onChangeText={text => searchFilterHandler(text)} onClear={text => searchFilterHandler('')}
+                platform={Platform.OS === 'ios' ? 'ios' : 'android'}></SearchBar>
             <FlatList data={data} numColumns={2} keyExtractor={(info, index) => index.toString()}
-                renderItem={renderListItem} style={styles.flatList}
-                ListHeaderComponent={renderHeader} />
+                renderItem={renderListItem} style={styles.flatList} />
         </View>
     );
 };

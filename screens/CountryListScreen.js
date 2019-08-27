@@ -38,7 +38,7 @@ const CountryListScreen = props => {
 CountryListScreen.navigationOptions = navData => {
     return {
         headerTitle: 'Countries',
-        headerLeft: <Ionicons style={styles.headerLeft} name="md-menu" size={25} color={Colors.accentColor}
+        headerLeft: <Ionicons style={styles.headerLeft} name="md-menu" size={30} color={Colors.accentColor}
             onPress={() => navData.navigation.toggleDrawer()}></Ionicons>
     }
 }

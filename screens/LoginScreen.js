@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TextInput, Button, Keyboard, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TextInput, Keyboard, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Colors from '../constants/Colors';
 import { auth, setAuthRedirectPath } from '../store/actions/auth';
+import ButtonWithBackground from '../components/UI/ButtonWithBackground/ButtonWithBackground';
 
 const LoginScreen = props => {
     const [username, setUsername] = useState(null);
+    const [usernameTouched, setUsernameTouched] = useState(false);
+    const [usernameValid, setUsernameValid] = useState(false);
+
     const [password, setPassword] = useState(null);
+    const [passwordTouched, setPasswordTouched] = useState(false);
+    const [passwordValid, setPasswordValid] = useState(false);
     const [passwordShow, setPasswordShow] = useState(false);
     const [passwordIcon, setPasswordIcon] = useState('md-eye-off');
+    const [passwordRef, setPasswordRef] = useState(null);
 
     let loading = useSelector(state => state.auth.loading);
     let sessionKey = useSelector(state => state.auth.sessionKey);
@@ -23,6 +30,7 @@ const LoginScreen = props => {
 
     useEffect(() => {
         if (sessionKey) {
+            Keyboard.dismiss();
             if (authRedirectPath === 'loved') {
                 dispatch(setAuthRedirectPath('/'));
                 props.navigation.navigate('LovedTracks');
@@ -34,44 +42,61 @@ const LoginScreen = props => {
         }
     }, [sessionKey]);
 
-    let submitButton = <Button title='Log In' onPress={loginHandler} />;
+    let submitButton = (
+        <ButtonWithBackground color="#29aaf4" onPress={loginHandler} disabled={!usernameValid || !passwordValid}>
+            Potvrdi
+        </ButtonWithBackground>
+    );
     if (loading) {
         submitButton = <ActivityIndicator></ActivityIndicator>;
     }
     return (
-        <ScrollView keyboardShouldPersistTaps={'handled'}>
-            <View style={styles.container}>
-                <View style={styles.header}>
-                    <Text style={styles.logoText}>last.fm</Text>
-                    <Text style={styles.headerText}>Music Service</Text>
-                </View>
-                <View style={styles.form}>
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps={'handled'}>
+            <View style={styles.header}>
+                <Text style={styles.logoText}>last.fm</Text>
+                <Text style={styles.headerText}>Music Service</Text>
+            </View>
+            <View style={styles.form}>
+                <TextInput
+                    style={[styles.textInput, !usernameValid && usernameTouched ? styles.invalid : null]}
+                    value={username}
+                    onChangeText={text => {
+                        setUsername(text);
+                        setUsernameValid(text ? true : false);
+                        setUsernameTouched(true);
+                    }}
+                    placeholder={'Username'}
+                    autoCapitalize='none'
+                    onSubmitEditing={() => { passwordRef.focus(); }}
+                    blurOnSubmit={false}
+                    returnKeyType={'next'}
+                />
+                <View style={styles.passwordInput}>
                     <TextInput
-                        style={styles.textInput}
-                        value={username}
-                        onChangeText={text => setUsername(text)}
-                        placeholder={'Username'}
+                        style={[styles.textInput, !passwordValid && passwordTouched ? styles.invalid : null]}
+                        value={password}
+                        onChangeText={text => {
+                            setPassword(text);
+                            setPasswordValid(text ? true : false);
+                            setPasswordTouched(true);
+                        }}
+                        placeholder={'Password'}
+                        secureTextEntry={!passwordShow}
                         autoCapitalize='none'
+                        ref={input => {
+                            setPasswordRef(input);
+                        }}
+                        blurOnSubmit={true}
+                        returnKeyType={'done'}
                     />
-                    <View style={styles.passwordInput}>
-                        <TextInput
-                            style={styles.textInput}
-                            value={password}
-                            onChangeText={text => setPassword(text)}
-                            placeholder={'Password'}
-                            secureTextEntry={!passwordShow}
-                            selectionColor={Colors.primaryColor}
-                            autoCapitalize='none'
-                        />
-                        <Ionicons name={passwordIcon} size={25} style={styles.showPasswordIcon}
-                            onPress={() => {
-                                passwordIcon === 'md-eye' ? setPasswordIcon('md-eye-off') : setPasswordIcon('md-eye');
-                                setPasswordShow(!passwordShow);
-                            }}></Ionicons>
-                    </View>
-                    {submitButton}
+                    <Ionicons name={passwordIcon} size={25} style={styles.showPasswordIcon}
+                        onPress={() => {
+                            passwordIcon === 'md-eye' ? setPasswordIcon('md-eye-off') : setPasswordIcon('md-eye');
+                            setPasswordShow(!passwordShow);
+                        }}></Ionicons>
                 </View>
             </View>
+            {submitButton}
         </ScrollView>
     );
 }
@@ -79,7 +104,7 @@ const LoginScreen = props => {
 LoginScreen.navigationOptions = navData => {
     return {
         headerTitle: 'Login',
-        headerLeft: <Ionicons style={styles.headerLeft} name="md-menu" size={25} color={Colors.accentColor}
+        headerLeft: <Ionicons style={styles.headerLeft} name="md-menu" size={30} color={Colors.accentColor}
             onPress={() => {
                 Keyboard.dismiss();
                 navData.navigation.toggleDrawer();
@@ -89,10 +114,10 @@ LoginScreen.navigationOptions = navData => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         backgroundColor: Colors.accentColor,
         alignItems: 'center',
-        justifyContent: 'center',
+        // justifyContent: 'space-around',
         paddingVertical: 10
     },
     header: {
@@ -118,6 +143,7 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     form: {
+        paddingTop: '10%',
         width: "80%"
     },
     textInput: {
@@ -134,6 +160,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 10,
         right: 0
+    },
+    invalid: {
+        borderColor: 'red',
+        borderBottomWidth: 2
+    },
+    disabledButton: {
+        backgroundColor: "#eee",
+        borderColor: "#aaa"
     },
     headerLeft: {
         paddingLeft: 10

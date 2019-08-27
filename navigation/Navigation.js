@@ -15,6 +15,7 @@ import LovedTracksScreen from '../screens/LovedTracksScreen';
 import LogoutScreen from '../screens/LogoutScreen';
 import Colors from '../constants/Colors';
 import { authSuccess } from '../store/actions/auth';
+import { fetchLoved } from '../store/actions/tracks';
 import Logo from '../assets/logo.png';
 
 const Navigation = props => {
@@ -34,6 +35,7 @@ const Navigation = props => {
                             console.log(api_sig);
                             if(api_sig) {
                                 dispatch(authSuccess(username, sessionKey, api_sig));
+                                dispatch(fetchLoved(username));
                                 console.log('session checked true');
                             }
                         });

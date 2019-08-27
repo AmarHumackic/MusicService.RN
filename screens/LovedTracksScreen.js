@@ -11,7 +11,7 @@ class LovedTracksScreen extends Component {
     static navigationOptions = ({ navigation }) => {
         return {
             headerTitle: 'Loved',
-            headerLeft: <Ionicons style={{ paddingLeft: 10 }} name="md-menu" size={25} color={Colors.accentColor}
+            headerLeft: <Ionicons style={{ paddingLeft: 10 }} name="md-menu" size={30} color={Colors.accentColor}
                 onPress={() => navigation.toggleDrawer()}></Ionicons>
         };
     };
@@ -40,7 +40,7 @@ class LovedTracksScreen extends Component {
     componentWillUnmount() {
         this.subs.forEach(sub => sub.remove());
     }
-
+    
     navigateToLogin = () => {
         if (!this.props.username) {
             this.props.onSetAuthRedirectPath('loved');
@@ -62,17 +62,19 @@ class LovedTracksScreen extends Component {
         } else if (this.props.error) {
             lovedTracksOutput = <Text style={styles.error}>{this.props.error.message}</Text>;
         } else {
-            if (this.props.lovedTracks.length === 0) {
+            if (this.props.loved.length === 0) {
                 lovedTracksOutput = <Text style={styles.noTracks}>You haven't loved any tracks yet.</Text>;
             } else {
-                lovedTracksOutput = this.props.lovedTracks.map((track, index) => {
+                lovedTracksOutput = this.props.loved.map((track, index) => {
                     return (
                         <View style={styles.headContainer} key={index}>
                             <TouchableOpacity onPress={() => this.props.navigation.navigate({
                                 routeName: 'Details',
                                 params: {
                                     artist: track.artistName,
-                                    track: track.trackName
+                                    track: track.trackName,
+                                    sessionKey: this.props.sessionKey,
+                                    typeLove: this.props.loved.some(tr => tr.artistName === track.artistName && tr.trackName === track.trackName) ? 'unlove' : 'love'
                                 }
                             })}>
                                 <View style={styles.itemContainer}>
@@ -81,7 +83,7 @@ class LovedTracksScreen extends Component {
                                         <Text style={styles.text}>Track: {track.trackName}</Text>
                                     </View>
                                     <View style={styles.love}>
-                                        <TouchableOpacity onPress={() => this.props.onToggleLove(track.trackName, track.artistName, api_sig, sessionKey)}>
+                                        <TouchableOpacity onPress={() => this.props.onToggleLove(track.artistName, track.trackName, this.props.sessionKey, 'unlove')}>
                                             <Ionicons name="md-trash" size={40} color={Colors.primaryColor}></Ionicons>
                                         </TouchableOpacity>
                                     </View>
@@ -162,8 +164,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
     return {
+        sessionKey: state.auth.sessionKey,
         username: state.auth.username,
-        lovedTracks: state.tracks.loved,
+        loved: state.tracks.loved,
         loading: state.tracks.loading,
         error: state.tracks.error
     };
@@ -172,7 +175,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onFetchLoved: (username) => dispatch(fetchLoved(username)),
-        onToggleLove: (trackName, artistName, api_sig, sessionKey) => dispatch(toggleLove(trackName, artistName, api_sig, sessionKey)),
+        onToggleLove: (artistName, trackName, sessionKey, type) => dispatch(toggleLove(artistName, trackName, sessionKey, type)),
         onSetAuthRedirectPath: (path) => dispatch(setAuthRedirectPath(path))
     };
 };
