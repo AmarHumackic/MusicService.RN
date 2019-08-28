@@ -57,6 +57,10 @@ const setToogleLove = (state, action) => {
     }
 }
 
+const resetLoved = (state, action) => {
+    return { ...state, loved: [] };
+}
+
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
@@ -70,6 +74,7 @@ const reducer = (state = initialState, action) => {
         case (actionTypes.FETCH_LOVED_SUCCESS): return fetchLovedSuccess(state, action);
         case (actionTypes.FETCH_LOVED_FAIL): return fetchLovedFail(state, action);
         case (actionTypes.SET_TOOGLE_LOVE): return setToogleLove(state, action);
+        case (actionTypes.RESET_LOVED): return resetLoved(state, action);
         default: return state;
     }
 };

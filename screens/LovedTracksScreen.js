@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, TouchableOpacity, Platform } from 'react-native';
 import { connect } from 'react-redux';
 
 import Colors from '../constants/Colors';
@@ -11,7 +11,8 @@ class LovedTracksScreen extends Component {
     static navigationOptions = ({ navigation }) => {
         return {
             headerTitle: 'Loved',
-            headerLeft: <Ionicons style={{ paddingLeft: 10 }} name="md-menu" size={30} color={Colors.accentColor}
+            headerLeft: <Ionicons style={{ paddingLeft: 10 }} name="md-menu" size={30}
+                color={Platform.OS === 'android' ? Colors.accentColor : Colors.primaryColor}
                 onPress={() => navigation.toggleDrawer()}></Ionicons>
         };
     };
@@ -40,7 +41,7 @@ class LovedTracksScreen extends Component {
     componentWillUnmount() {
         this.subs.forEach(sub => sub.remove());
     }
-    
+
     navigateToLogin = () => {
         if (!this.props.username) {
             this.props.onSetAuthRedirectPath('loved');

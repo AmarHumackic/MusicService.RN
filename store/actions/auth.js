@@ -3,7 +3,7 @@ import Axios from 'axios';
 import { API_KEY, SHARED_SECRET } from '../../APIconfig';
 import * as Crypto from 'expo-crypto';
 import { AsyncStorage } from 'react-native';
-
+import { fetchLoved, resetLoved } from './tracks';
 
 export const authStart = () => {
     return {
@@ -48,6 +48,7 @@ export const auth = (username, password) => {
                 AsyncStorage.setItem('sessionKey', response.data.session.key).then(json => {
                     AsyncStorage.setItem('api_sig', api_sig).then(json => {
                         dispatch(authSuccess(response.data.session.name, response.data.session.key, api_sig));
+                        dispatch(fetchLoved(username));
                         console.log('api_sig setted: ' + api_sig);
                     })
                 });
@@ -81,6 +82,7 @@ export const logout = () => {
     return dispatch => {
         dispatch(clearStorage());
         dispatch(removeData());
+        dispatch(resetLoved());
     };
 }
 

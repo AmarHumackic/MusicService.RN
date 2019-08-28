@@ -34,7 +34,7 @@ const Navigation = props => {
                     if (sessionKey) {
                         AsyncStorage.getItem('api_sig').then(api_sig => {
                             console.log(api_sig);
-                            if(api_sig) {
+                            if (api_sig) {
                                 dispatch(authSuccess(username, sessionKey, api_sig));
                                 dispatch(fetchLoved(username));
                                 console.log('session checked true');
@@ -65,7 +65,7 @@ const defaultStackNavOptions = {
     headerStyle: {
         backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : ''
     },
-    headerTintColor: Platform.OS === 'android' ? 'white' : Colors.primaryColor
+    headerTintColor: Platform.OS === 'android' ? Colors.accentColor : Colors.primaryColor
 };
 
 const CountryTracksNavigator = createStackNavigator(
@@ -120,7 +120,7 @@ const CountryLovedTabNavigator = createBottomTabNavigator(
             inactiveTintColor: Colors.secondaryColor,
             style: {
                 backgroundColor: Platform.OS === 'android' ? Colors.primaryColor : ''
-            }
+            },
         }
     }
 );

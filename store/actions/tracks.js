@@ -117,6 +117,12 @@ export const fetchLovedFail = (error) => {
     };
 };
 
+export const resetLoved = () => {
+    return {
+        type: actionTypes.RESET_LOVED
+    };
+};
+
 export const fetchLoved = (username) => {
     return dispatch => {
         dispatch(fetchLovedStart());

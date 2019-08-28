@@ -9,10 +9,11 @@ const CountryList = props => {
     const [data, setData] = useState(null);
     const [arrayHolder, setArrayHolder] = useState(null);
     const [searchValue, setSearchValue] = useState('');
-
+    
     useEffect(() => {
         setData(props.countries);
         setArrayHolder(props.countries);
+
     }, [props.countries]);
 
     const searchFilterHandler = name => {
@@ -57,7 +58,7 @@ const CountryList = props => {
                 onChangeText={text => searchFilterHandler(text)} onClear={text => searchFilterHandler('')}
                 platform={Platform.OS === 'ios' ? 'ios' : 'android'}></SearchBar>
             <FlatList data={data} numColumns={2} keyExtractor={(info, index) => index.toString()}
-                renderItem={renderListItem} style={styles.flatList} />
+                renderItem={renderListItem} style={styles.flatList}  />
         </View>
     );
 };

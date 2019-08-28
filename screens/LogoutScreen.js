@@ -3,6 +3,7 @@ import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 
 import { logout } from '../store/actions/auth';
+import Colors from '../constants/Colors';
 
 class LogoutScreen extends Component {
     componentDidMount() {

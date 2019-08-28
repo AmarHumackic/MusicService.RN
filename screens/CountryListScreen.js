@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Keyboard, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Platform, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -43,7 +43,7 @@ const CountryListScreen = props => {
 CountryListScreen.navigationOptions = navData => {
     return {
         headerTitle: 'Countries',
-        headerLeft: <Ionicons style={styles.headerLeft} name="md-menu" size={30} color={Colors.accentColor}
+        headerLeft: <Ionicons style={styles.headerLeft} name="md-menu" size={30} color={Platform.OS === 'android' ? Colors.accentColor : Colors.primaryColor}
             onPress={() => navData.navigation.toggleDrawer()}></Ionicons>
     }
 }

@@ -2,20 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchTracks, toggleLove } from '../store/actions/tracks';
+import { setAuthRedirectPath } from '../store/actions/auth';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 
+// const handleScroll = event => {
+//     console.log(event);
+//     console.log(event.nativeEvent.contentOffset.y);
+// };
 
-const checkContains = (arr, obj) => {
-    arr.forEach(element => {
-        if (element.artistName === obj.artistName && element.trackName === obj.trackName) {
-            console.log('contains function');
-            console.log(true);
-            return true;
-        }
-    });
-    return false;
-}
+// const scrollToRow = itemIndex => {
+//     scrollPosition.scrollTo({ y: itemIndex * ROW_HEIGHT });
+// }
 
 const TopTracksScreen = props => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -76,7 +74,14 @@ const TopTracksScreen = props => {
                                     </View>
                                     :
                                     <View style={styles.love}>
-                                        <TouchableOpacity onPress={() => dispatch(toggleLove(track.artistName, track.trackName, sessionKey, 'love'))}>
+                                        <TouchableOpacity onPress={() => {
+                                            if (sessionKey) {
+                                                dispatch(toggleLove(track.artistName, track.trackName, sessionKey, 'love'))
+                                            } else {
+                                                dispatch(setAuthRedirectPath('top'));
+                                                props.navigation.navigate('Login');
+                                            }
+                                        }}>
                                             <Ionicons name={'md-heart-empty'}
                                                 size={40} color={'black'}></Ionicons>
                                         </TouchableOpacity>

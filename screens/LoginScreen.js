@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TextInput, Keyboard, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TextInput, Keyboard, ScrollView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -34,6 +34,9 @@ const LoginScreen = props => {
             if (authRedirectPath === 'loved') {
                 dispatch(setAuthRedirectPath('/'));
                 props.navigation.navigate('LovedTracks');
+            } else if(authRedirectPath === 'top') {
+                dispatch(setAuthRedirectPath('/'));
+                props.navigation.navigate('CountryTracks');
             } else {
                 props.navigation.navigate('CountryList');
             }
@@ -104,7 +107,7 @@ const LoginScreen = props => {
 LoginScreen.navigationOptions = navData => {
     return {
         headerTitle: 'Login',
-        headerLeft: <Ionicons style={styles.headerLeft} name="md-menu" size={30} color={Colors.accentColor}
+        headerLeft: <Ionicons style={styles.headerLeft} name="md-menu" size={30} color={Platform.OS === 'android' ? Colors.accentColor : Colors.primaryColor}
             onPress={() => {
                 Keyboard.dismiss();
                 navData.navigation.toggleDrawer();

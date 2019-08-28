@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, FlatList, Linking, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, FlatList, Linking, Platform } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
@@ -120,7 +120,7 @@ DetailsScreen.navigationOptions = navData => {
     return {
         headerTitle: trackName,
         headerRight:<Ionicons style={styles.headerRight} name={typeLove === 'love' ? 'md-heart-empty' : 'md-heart'}
-                size={30} color={Colors.accentColor} onPress={toogleLoveHeader}></Ionicons>
+                size={30} color={Platform === 'android' ? Colors.accentColor : Colors.primaryColor} onPress={toogleLoveHeader}></Ionicons>
     };
 };
 
