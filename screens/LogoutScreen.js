@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { logout } from '../store/actions/auth';
@@ -9,6 +9,7 @@ class LogoutScreen extends Component {
     componentDidMount() {
         this.subs = [
             this.props.navigation.addListener('didFocus', () => {
+                ToastAndroid.show('Logged out.', ToastAndroid.SHORT);
                 this.props.onLogout();
                 this.props.navigation.navigate('CountryList');
             }),

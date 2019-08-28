@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Text, AsyncStorage, SafeAreaView, View, Image, Platform } from 'react-native';
-import {
-    createStackNavigator, createBottomTabNavigator, createAppContainer, createDrawerNavigator, DrawerItems
-} from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator, createAppContainer, createDrawerNavigator, DrawerItems } from 'react-navigation';
 import { Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppLoading } from 'expo';
@@ -16,28 +14,21 @@ import LogoutScreen from '../screens/LogoutScreen';
 import Colors from '../constants/Colors';
 import { authSuccess } from '../store/actions/auth';
 import { fetchLoved } from '../store/actions/tracks';
-import { fetchCountries } from '../store/actions/countryList';
 import Logo from '../assets/logo.png';
 
 const Navigation = props => {
-
     const [sessionChecked, setSessionChecked] = useState(false);
-
     const dispatch = useDispatch();
 
     const checkSession = () => {
         AsyncStorage.getItem('username').then(username => {
-            console.log(username);
             if (username) {
                 AsyncStorage.getItem('sessionKey').then(sessionKey => {
-                    console.log(sessionKey);
                     if (sessionKey) {
                         AsyncStorage.getItem('api_sig').then(api_sig => {
-                            console.log(api_sig);
                             if (api_sig) {
                                 dispatch(authSuccess(username, sessionKey, api_sig));
                                 dispatch(fetchLoved(username));
-                                console.log('session checked true');
                             }
                         });
                     }
@@ -96,7 +87,8 @@ const CountryLovedTabNavigator = createBottomTabNavigator(
             navigationOptions: {
                 tabBarIcon: tabInfo => {
                     return (
-                        <Ionicons name="md-musical-notes" size={25} color={tabInfo.tintColor} />
+                        <Ionicons name={Platform.OS === 'android' ? 'md-musical-notes' : 'ios-musical-notes'}
+                            size={25} color={tabInfo.tintColor} />
                     );
                 },
                 tabBarLabel: 'All'
@@ -107,7 +99,8 @@ const CountryLovedTabNavigator = createBottomTabNavigator(
             navigationOptions: {
                 tabBarIcon: tabInfo => {
                     return (
-                        <Ionicons name="md-heart" size={25} color={tabInfo.tintColor} />
+                        <Ionicons name={Platform.OS === 'android' ? 'md-heart' : 'ios-heart'}
+                            size={25} color={tabInfo.tintColor} />
                     );
                 },
                 tabBarLabel: 'Loved'
@@ -141,7 +134,7 @@ const MainNavigator = createDrawerNavigator(
             navigationOptions: {
                 drawerLabel: 'Music Service',
                 drawerIcon: () => (
-                    <Ionicons name={Platform.OS === 'android' ? "md-musical-notes" : "ios-musical-notes"} size={25}></Ionicons>
+                    <Ionicons name={Platform.OS === 'android' ? 'md-musical-notes' : 'ios-musical-notes'} size={25}></Ionicons>
                 )
             }
         },
@@ -150,7 +143,7 @@ const MainNavigator = createDrawerNavigator(
             navigationOptions: {
                 drawerLabel: 'Login',
                 drawerIcon: () => (
-                    <Ionicons name={Platform.OS === 'android' ? "md-log-in" : "ios-log-in"} size={25}></Ionicons>
+                    <Ionicons name={Platform.OS === 'android' ? 'md-log-in' : 'ios-log-in'} size={25}></Ionicons>
                 )
             }
         },
@@ -160,7 +153,7 @@ const MainNavigator = createDrawerNavigator(
             navigationOptions: {
                 drawerLabel: 'Logout',
                 drawerIcon: () => (
-                    <Ionicons name={Platform.OS === 'android' ? "md-log-out" : "ios-log-out"} size={25}></Ionicons>
+                    <Ionicons name={Platform.OS === 'android' ? 'md-log-out' : 'ios-log-out'} size={25}></Ionicons>
                 )
             }
         }

@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  Platform
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform } from 'react-native';
 
 import SVGImage from 'react-native-svg-image';
 
@@ -26,6 +19,7 @@ const ListItem = props => {
     }
     return title;
   };
+
   return (
     <View style={styles.listItem}>
       <TouchableOpacity onPress={props.onSelectCountry}>

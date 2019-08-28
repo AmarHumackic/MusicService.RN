@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TextInput, Keyboard, ScrollView, Platform } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TextInput, Keyboard, ToastAndroid, Platform, KeyboardAvoidingView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -21,6 +21,7 @@ const LoginScreen = props => {
 
     let loading = useSelector(state => state.auth.loading);
     let sessionKey = useSelector(state => state.auth.sessionKey);
+    let usernameLogged = useSelector(state => state.auth.username);
     let authRedirectPath = useSelector(state => state.auth.authRedirectPath);
 
     const dispatch = useDispatch();
@@ -34,28 +35,31 @@ const LoginScreen = props => {
             if (authRedirectPath === 'loved') {
                 dispatch(setAuthRedirectPath('/'));
                 props.navigation.navigate('LovedTracks');
-            } else if(authRedirectPath === 'top') {
+            } else if (authRedirectPath === 'top') {
                 dispatch(setAuthRedirectPath('/'));
                 props.navigation.navigate('CountryTracks');
             } else {
                 props.navigation.navigate('CountryList');
             }
+            ToastAndroid.show('Logged in as ' + usernameLogged, ToastAndroid.SHORT);
             setUsername(null);
             setPassword(null);
         }
     }, [sessionKey]);
 
     let submitButton = (
-        <ButtonWithBackground color="#29aaf4" onPress={loginHandler} disabled={!usernameValid || !passwordValid}>
-            Potvrdi
+        <ButtonWithBackground color={Colors.primaryColor} tintColor={Colors.accentColor} onPress={loginHandler} disabled={!usernameValid || !passwordValid}>
+            Let me in!
         </ButtonWithBackground>
     );
+
     if (loading) {
         submitButton = <ActivityIndicator color={Colors.primaryColor}></ActivityIndicator>;
     }
+
     return (
-        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps={'handled'}>
-            <View style={styles.header}>
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
+            <View>
                 <Text style={styles.logoText}>last.fm</Text>
                 <Text style={styles.headerText}>Music Service</Text>
             </View>
@@ -100,14 +104,15 @@ const LoginScreen = props => {
                 </View>
             </View>
             {submitButton}
-        </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 LoginScreen.navigationOptions = navData => {
     return {
         headerTitle: 'Login',
-        headerLeft: <Ionicons style={styles.headerLeft} name="md-menu" size={30} color={Platform.OS === 'android' ? Colors.accentColor : Colors.primaryColor}
+        headerLeft: <Ionicons style={styles.headerLeft} name={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
+            size={30} color={Platform.OS === 'android' ? Colors.accentColor : Colors.primaryColor}
             onPress={() => {
                 Keyboard.dismiss();
                 navData.navigation.toggleDrawer();
@@ -117,14 +122,10 @@ LoginScreen.navigationOptions = navData => {
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
+        flex: 1,
         backgroundColor: Colors.accentColor,
         alignItems: 'center',
-        // justifyContent: 'space-around',
-        paddingVertical: 10
-    },
-    header: {
-        paddingVertical: 15
+        justifyContent: 'center'
     },
     logoText: {
         color: Colors.accentColor,

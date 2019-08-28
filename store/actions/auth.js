@@ -36,33 +36,32 @@ export const auth = (username, password) => {
             Crypto.CryptoDigestAlgorithm.MD5,
             api_sigStr
         );
-        console.log('api_sig: ' + api_sigStr);
-        console.log('Digest: ', api_sig);
 
         const url = `https://ws.audioscrobbler.com/2.0/?method=auth.getMobileSession&password=${password}&username=${username}&api_key=${API_KEY}&api_sig=${api_sig}&format=json`;
-        console.log(url);
         Axios.post(url).then(response => {
-            console.log('mobileauth');
-            console.log(response);
-            AsyncStorage.setItem('username', response.data.session.name).then(json => {
-                AsyncStorage.setItem('sessionKey', response.data.session.key).then(json => {
-                    AsyncStorage.setItem('api_sig', api_sig).then(json => {
-                        dispatch(authSuccess(response.data.session.name, response.data.session.key, api_sig));
-                        dispatch(fetchLoved(username));
-                        console.log('api_sig setted: ' + api_sig);
-                    })
+            if (response.data.error === 4) {
+                response.data.message = 'Invalid username or password.';
+                dispatch(authFail(response.data));
+            } else {
+                AsyncStorage.setItem('username', response.data.session.name).then(json => {
+                    AsyncStorage.setItem('sessionKey', response.data.session.key).then(json => {
+                        AsyncStorage.setItem('api_sig', api_sig).then(json => {
+                            dispatch(authSuccess(response.data.session.name, response.data.session.key, api_sig));
+                            dispatch(fetchLoved(username));
+                        })
+                    });
                 });
-            }).catch(err => {
-                alert(err.message);
-            });
+            }
         }).catch(error => {
-            alert('Invalid username or password.');
+            if (error.message === 'Request failed with status code 403') {
+                alert('Invalid username or password.');
+            } else {
+                alert('No network connection.')
+            }
             dispatch(authFail(error));
         });
-
-
-    }
-}
+    };
+};
 
 export const clearStorage = () => {
     return dispatch => {
@@ -84,7 +83,7 @@ export const logout = () => {
         dispatch(removeData());
         dispatch(resetLoved());
     };
-}
+};
 
 export const setAuthRedirectPath = (path) => {
     return {

@@ -12,11 +12,11 @@ const fetchCountriesStart = (state, action) => {
 
 const fetchCountriesSuccess = (state, action) => {
     return { ...state, loading: false, countries: action.countries, error: null };
-}
+};
 
 const fetchCountriesFail = (state, action) => {
     return { ...state, loading: false, error: action.error };
-}
+};
 
 const reducer = (state = initialState, action) => {
     switch(action.type) {

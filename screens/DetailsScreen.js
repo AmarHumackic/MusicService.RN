@@ -1,40 +1,65 @@
-import React, { useEffect, useCallback, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, FlatList, Linking, Platform } from 'react-native';
+import React, { useEffect, useCallback } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, FlatList, Linking, Platform, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
+
 import Colors from '../constants/Colors';
 import { fetchDetails, toggleLove } from '../store/actions/tracks';
+import { setAuthRedirectPath } from '../store/actions/auth';
 
 const DetailsScreen = props => {
     const artistName = props.navigation.getParam('artist');
     const trackName = props.navigation.getParam('track');
-    const sessionKey = props.navigation.getParam('sessionKey');
     let typeLove = props.navigation.getParam('typeLove');
+    let sessionKey = useSelector(state => state.auth.sessionKey);
+    let loved = useSelector(state => state.tracks.loved);
 
     const dispatch = useDispatch();
 
+    //callback for toggle love, if user is logged in(sessionKey exists)
     const toggleLoveHandler = useCallback(() => {
-        dispatch(toggleLove(artistName, trackName, sessionKey, typeLove));
-        
-        typeLove = typeLove === 'love' ? 'unlove' : 'love';
-        props.navigation.setParams({ typeLove: typeLove });
+        if (sessionKey) {
+            dispatch(toggleLove(artistName, trackName, sessionKey, typeLove));
+            typeLove = typeLove === 'love' ? 'unlove' : 'love';
+            props.navigation.setParams({ typeLove: typeLove });
+        } else {
+            Alert.alert(
+                'Permissions',
+                'Authentication is required.',
+                [
+                    {
+                        text: 'Cancel',
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'Login', onPress: () => {
+                            dispatch(setAuthRedirectPath('top'));
+                            props.navigation.navigate('Login');
+                        }
+                    },
+                ],
+                { cancelable: false }
+            );
+        }
 
-    }, [dispatch, artistName, trackName]);
+    }, [dispatch, artistName, trackName, sessionKey]);
 
+    //connect callback with love button
     useEffect(() => {
         props.navigation.setParams({ toogleLoveHeader: toggleLoveHandler });
-        console.log('useEffect prvi');
     }, [toggleLoveHandler]);
 
+    //fetch track details
     useEffect(() => {
         dispatch(fetchDetails(artistName, trackName));
     }, 0);
 
-    // useEffect(() => {
-    //     console.log('useEffect typeLove');
-    //     props.navigation.setParams({ typeLove: typeLove });
-
-    // }, [typeLove])
+    //for case when user is not logged in and after successfull login this checks if current track is loved
+    useEffect(() => {
+        const typeLoveNew = loved.some(tr => tr.artistName === artistName && tr.trackName === trackName) ? 'unlove' : 'love'
+        props.navigation.setParams({ typeLove: typeLoveNew });
+    }, [sessionKey, loved]);
 
     let detailsOutput = null;
 
@@ -51,7 +76,6 @@ const DetailsScreen = props => {
     } else if (error) {
         detailsOutput = <Text style={styles.error}>{error.message}</Text>;
     } else {
-        console.log(details);
         if (details) {
             const minutes = Math.floor((details.duration / 1000) / 60);
             const seconds = (details.duration / 1000) - minutes * 60;
@@ -101,9 +125,7 @@ const DetailsScreen = props => {
         } else {
             detailsOutput = <Text style={styles.error}>Empty Details...</Text>;
         }
-
     }
-
     return (
         <ScrollView>
             <View>
@@ -119,8 +141,11 @@ DetailsScreen.navigationOptions = navData => {
     const toogleLoveHeader = navData.navigation.getParam('toogleLoveHeader');
     return {
         headerTitle: trackName,
-        headerRight:<Ionicons style={styles.headerRight} name={typeLove === 'love' ? 'md-heart-empty' : 'md-heart'}
-                size={30} color={Platform === 'android' ? Colors.accentColor : Colors.primaryColor} onPress={toogleLoveHeader}></Ionicons>
+        headerRight: <Ionicons style={styles.headerRight} size={30}
+            name={Platform.OS === 'android' ?
+                typeLove === 'love' ? 'md-heart-empty' : 'md-heart' :
+                typeLove === 'love' ? 'ios-heart-empty' : 'ios-heart'}
+            color={Platform.OS === 'android' ? Colors.accentColor : Colors.primaryColor} onPress={toogleLoveHeader}></Ionicons>
     };
 };
 

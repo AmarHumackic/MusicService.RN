@@ -22,15 +22,15 @@ const authSuccess = (state, action) => {
         api_sig: action.api_sig,
         error: null
     };
-}
+};
 
 const authFail = (state, action) => {
     return { ...state, loading: false, error: action.error };
-}
+};
 
 const removeData = (state, action) => {
     return { ...state, username: null, sessionKey: null, api_sig: null };
-}
+};
 
 const setAuthRedirectPath = (state, action) => {
     return { ...state, authRedirectPath: action.path };

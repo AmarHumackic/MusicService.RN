@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Platform, TextInput } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -11,10 +11,7 @@ const CountryListScreen = props => {
     const dispatch = useDispatch();
     useEffect(() => {
         if (countries.length === 0) {
-            console.log('fetcha drzave u CountryListScreenu');
             dispatch(fetchCountries());
-        } else {
-            console.log('NE fetcha drzave u CountryListScreenu');
         }
     }, 0);
 
@@ -32,7 +29,6 @@ const CountryListScreen = props => {
         countriesOutput = <CountryList countries={countries} navigation={props.navigation}></CountryList>;
     }
 
-
     return (
         <View style={styles.container}>
             {countriesOutput}
@@ -43,7 +39,8 @@ const CountryListScreen = props => {
 CountryListScreen.navigationOptions = navData => {
     return {
         headerTitle: 'Countries',
-        headerLeft: <Ionicons style={styles.headerLeft} name="md-menu" size={30} color={Platform.OS === 'android' ? Colors.accentColor : Colors.primaryColor}
+        headerLeft: <Ionicons style={styles.headerLeft} name={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
+            size={30} color={Platform.OS === 'android' ? Colors.accentColor : Colors.primaryColor}
             onPress={() => navData.navigation.toggleDrawer()}></Ionicons>
     }
 }

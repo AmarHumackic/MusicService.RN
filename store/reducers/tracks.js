@@ -14,11 +14,11 @@ const fetchTracksStart = (state, action) => {
 
 const fetchTracksSuccess = (state, action) => {
     return { ...state, loading: false, tracks: action.tracks, error: null };
-}
+};
 
 const fetchTracksFail = (state, action) => {
     return { ...state, loading: false, error: action.error };
-}
+};
 
 const fetchDetailsStart = (state, action) => {
     return { ...state, loading: true, details: null };
@@ -26,11 +26,11 @@ const fetchDetailsStart = (state, action) => {
 
 const fetchDetailsSuccess = (state, action) => {
     return { ...state, loading: false, details: action.details, error: null };
-}
+};
 
 const fetchDetailsFail = (state, action) => {
     return { ...state, loading: false, error: action.error };
-}
+};
 
 const fetchLovedStart = (state, action) => {
     return { ...state, loading: true };
@@ -38,29 +38,26 @@ const fetchLovedStart = (state, action) => {
 
 const fetchLovedSuccess = (state, action) => {
     return { ...state, loading: false, loved: action.lovedTracks, error: null };
-}
+};
 
 const fetchLovedFail = (state, action) => {
     return { ...state, loading: false, error: action.error };
-}
+};
 
 const setToogleLove = (state, action) => {
     if (action.typeLove === 'love') {
         const newTrack = { artistName: action.artistName, trackName: action.trackName };
         //adding item at the start of the array
-        console.log('new track ' + newTrack);
         return { ...state, loved: [newTrack, ...state.loved] };
     } else if(action.typeLove === 'unlove') {
         const newLoved = state.loved.filter(item => item.artistName !== action.artistName || item.trackName !== action.trackName);
-        console.log('removed track ' + newLoved);
         return { ...state, loved: newLoved };
     }
-}
+};
 
 const resetLoved = (state, action) => {
     return { ...state, loved: [] };
-}
-
+};
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {

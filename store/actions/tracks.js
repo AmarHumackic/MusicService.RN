@@ -2,7 +2,6 @@ import * as actionTypes from './actionTypes';
 import Axios from 'axios';
 import { API_KEY, SHARED_SECRET } from '../../APIconfig';
 import * as Crypto from 'expo-crypto';
-import { AsyncStorage } from 'react-native';
 
 export const fetchTracksStart = () => {
     return {
@@ -26,9 +25,7 @@ export const fetchTracksFail = (error) => {
 
 export const fetchTracks = (countryName, limit, page) => {
     return dispatch => {
-        console.log(encodeURIComponent(countryName));
         const countryNameEnc = encodeURIComponent(countryName).replace(/\(/g, '%28').replace(/\)/g, '%29');
-        console.log(countryNameEnc);
         dispatch(fetchTracksStart());
         Axios.get(`http://ws.audioscrobbler.com/2.0/?method=geo.gettoptracks&country=${countryNameEnc}&api_key=${API_KEY}&format=json&limit=${limit}&page=${page}`).then(response => {
             if (response.data.error === 6) {
@@ -47,8 +44,8 @@ export const fetchTracks = (countryName, limit, page) => {
         }).catch(error => {
             dispatch(fetchTracksFail(error));
         });
-    }
-}
+    };
+};
 
 export const fetchDetailsStart = () => {
     return {
@@ -73,8 +70,6 @@ export const fetchDetailsFail = (error) => {
 export const fetchDetails = (artistName, trackName) => {
     return dispatch => {
         dispatch(fetchDetailsStart());
-
-        console.log(`http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${API_KEY}&artist=${artistName}&track=${trackName}&format=json`);
         Axios.get(`http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${API_KEY}&artist=${artistName}&track=${trackName}&format=json`).then(response => {
             const track = {
                 album: response.data.track.album,
@@ -87,6 +82,7 @@ export const fetchDetails = (artistName, trackName) => {
                 wiki: response.data.track.wiki ? response.data.track.wiki.summary : null
             };
             if (track.wiki) {
+                //Some of tracks doesn't have wiki and some of contents have <a> tag on the end
                 let tempWiki = track.wiki.split('<a');
                 track.wiki = tempWiki[0];
             }
@@ -94,8 +90,8 @@ export const fetchDetails = (artistName, trackName) => {
         }).catch(error => {
             dispatch(fetchDetailsFail(error));
         });
-    }
-}
+    };
+};
 
 export const fetchLovedStart = () => {
     return {
@@ -138,8 +134,8 @@ export const fetchLoved = (username) => {
         }).catch(err => {
             dispatch(fetchLovedFail(err));
         });
-    }
-}
+    };
+};
 
 export const setToogleLove = (artistName, trackName, typeLove) => {
     return {
@@ -148,13 +144,12 @@ export const setToogleLove = (artistName, trackName, typeLove) => {
         trackName: trackName,
         typeLove: typeLove
     };
-}
+};
 
 export const toggleLove = (artistName, trackName, sessionKey, typeLove) => {
     return async dispatch => {
         const trackNameEnc = decodeURIComponent(escape(trackName));
         const artistNameEnc = decodeURIComponent(escape(artistName));
-
         let api_sigStr = `api_key${API_KEY}artist${artistNameEnc}methodtrack.${typeLove}sk${sessionKey}track${trackNameEnc}${SHARED_SECRET}`;
         const api_sig = await Crypto.digestStringAsync(
             Crypto.CryptoDigestAlgorithm.MD5,
@@ -167,5 +162,5 @@ export const toggleLove = (artistName, trackName, sessionKey, typeLove) => {
         }).catch(error => {
             alert(error.message);
         });
-    }
-}
+    };
+};

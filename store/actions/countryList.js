@@ -28,7 +28,6 @@ export const fetchCountries = () => {
         AsyncStorage.getItem('countries').then(req => JSON.parse(req)).then(json => {
             countries = json;
             if (countries) {
-                console.log('drzave postojale u asyncstorage')
                 dispatch(fetchCountriesSuccess(countries));
             } else {
                 dispatch(fetchCountriesStart());
@@ -41,18 +40,13 @@ export const fetchCountries = () => {
                         });
                     });
                     AsyncStorage.setItem('countries', JSON.stringify(countriesArr)).then(json => {
-                        console.log('setted');
-                    }).catch(err => {
-                        console.log('error setting');
+                        console.log('AsyncStorage --- countries setted');
                     });
                     dispatch(fetchCountriesSuccess(countriesArr));
                 }).catch(error => {
-                    console.log(error);
+                    dispatch(fetchCountriesFail(error));
                 });
             }
-        }).catch(err => {
-            console.log(err.message);
         });
-        
     }
 }

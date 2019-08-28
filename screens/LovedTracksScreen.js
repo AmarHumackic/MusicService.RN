@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, TouchableOpacity, Platform, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
 
 import Colors from '../constants/Colors';
-import { Ionicons } from '@expo/vector-icons';
 import { fetchLoved, toggleLove } from '../store/actions/tracks';
 import { setAuthRedirectPath } from '../store/actions/auth';
 
@@ -11,8 +11,8 @@ class LovedTracksScreen extends Component {
     static navigationOptions = ({ navigation }) => {
         return {
             headerTitle: 'Loved',
-            headerLeft: <Ionicons style={{ paddingLeft: 10 }} name="md-menu" size={30}
-                color={Platform.OS === 'android' ? Colors.accentColor : Colors.primaryColor}
+            headerLeft: <Ionicons style={{ paddingLeft: 10 }} name={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
+                size={30} color={Platform.OS === 'android' ? Colors.accentColor : Colors.primaryColor}
                 onPress={() => navigation.toggleDrawer()}></Ionicons>
         };
     };
@@ -44,6 +44,7 @@ class LovedTracksScreen extends Component {
 
     navigateToLogin = () => {
         if (!this.props.username) {
+            ToastAndroid.show('Login required.', ToastAndroid.SHORT);
             this.props.onSetAuthRedirectPath('loved');
             this.props.navigation.navigate("CountryTracks");
             this.props.navigation.navigate("Login");
@@ -51,7 +52,6 @@ class LovedTracksScreen extends Component {
     }
 
     render() {
-
         let lovedTracksOutput = null;
 
         if (this.props.loading) {
@@ -74,7 +74,6 @@ class LovedTracksScreen extends Component {
                                 params: {
                                     artist: track.artistName,
                                     track: track.trackName,
-                                    sessionKey: this.props.sessionKey,
                                     typeLove: this.props.loved.some(tr => tr.artistName === track.artistName && tr.trackName === track.trackName) ? 'unlove' : 'love'
                                 }
                             })}>
@@ -85,7 +84,8 @@ class LovedTracksScreen extends Component {
                                     </View>
                                     <View style={styles.love}>
                                         <TouchableOpacity onPress={() => this.props.onToggleLove(track.artistName, track.trackName, this.props.sessionKey, 'unlove')}>
-                                            <Ionicons name="md-trash" size={40} color={Colors.primaryColor}></Ionicons>
+                                            <Ionicons name={Platform.OS === 'android' ? 'md-trash' : 'ios-trash'}
+                                                size={40} color={Colors.primaryColor}></Ionicons>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -156,7 +156,6 @@ const styles = StyleSheet.create({
         color: 'black',
         fontWeight: 'bold',
         marginTop: Dimensions.get("window").height / 2 - 40
-
     },
     headerLeft: {
         paddingLeft: 10
@@ -182,5 +181,3 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LovedTracksScreen);
-
-// export default LovedTracksScreen;
