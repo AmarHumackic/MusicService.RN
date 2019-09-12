@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, TouchableOpacity, Platform, ToastAndroid } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Dimensions, Platform, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 
 import Colors from '../constants/Colors';
-import { fetchLoved, toggleLove } from '../store/actions/tracks';
+import { fetchLoved } from '../store/actions/tracks';
 import { setAuthRedirectPath } from '../store/actions/auth';
+import LovedTrack from '../components/LovedTrack';
 
 class LovedTracksScreen extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -67,31 +68,7 @@ class LovedTracksScreen extends Component {
                 lovedTracksOutput = <Text style={styles.noTracks}>You haven't loved any tracks yet.</Text>;
             } else {
                 lovedTracksOutput = this.props.loved.map((track, index) => {
-                    return (
-                        <View style={styles.headContainer} key={index}>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate({
-                                routeName: 'Details',
-                                params: {
-                                    artist: track.artistName,
-                                    track: track.trackName,
-                                    typeLove: this.props.loved.some(tr => tr.artistName === track.artistName && tr.trackName === track.trackName) ? 'unlove' : 'love'
-                                }
-                            })}>
-                                <View style={styles.itemContainer}>
-                                    <View style={styles.track}>
-                                        <Text style={styles.text}>Artist: {track.artistName}</Text>
-                                        <Text style={styles.text}>Track: {track.trackName}</Text>
-                                    </View>
-                                    <View style={styles.love}>
-                                        <TouchableOpacity onPress={() => this.props.onToggleLove(track.artistName, track.trackName, this.props.sessionKey, 'unlove')}>
-                                            <Ionicons name={Platform.OS === 'android' ? 'md-trash' : 'ios-trash'}
-                                                size={40} color={Colors.primaryColor}></Ionicons>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View >
-                    );
+                    return <LovedTrack key={index} track={track} index={index} navigation={this.props.navigation}></LovedTrack>;
                 })
             }
         }

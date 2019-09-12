@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TextInput, Keyboard, ToastAndroid, Platform, KeyboardAvoidingView } from 'react-native';
+import { View, ScrollView, Text, StyleSheet, ActivityIndicator, TextInput, Keyboard, ToastAndroid, Platform, KeyboardAvoidingView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Colors from '../constants/Colors';
 import { auth, setAuthRedirectPath } from '../store/actions/auth';
-import ButtonWithBackground from '../components/UI/ButtonWithBackground/ButtonWithBackground';
+import ButtonWithBackground from '../components/UI/ButtonWithBackground';
 
 const LoginScreen = props => {
     const [username, setUsername] = useState(null);
@@ -58,52 +58,54 @@ const LoginScreen = props => {
     }
 
     return (
-        <KeyboardAvoidingView style={styles.container} behavior="padding">
-            <View>
-                <Text style={styles.logoText}>last.fm</Text>
-                <Text style={styles.headerText}>Music Service</Text>
-            </View>
-            <View style={styles.form}>
-                <TextInput
-                    style={[styles.textInput, !usernameValid && usernameTouched ? styles.invalid : null]}
-                    value={username}
-                    onChangeText={text => {
-                        setUsername(text);
-                        setUsernameValid(text ? true : false);
-                        setUsernameTouched(true);
-                    }}
-                    placeholder={'Username'}
-                    autoCapitalize='none'
-                    onSubmitEditing={() => { passwordRef.focus(); }}
-                    blurOnSubmit={false}
-                    returnKeyType={'next'}
-                />
-                <View style={styles.passwordInput}>
-                    <TextInput
-                        style={[styles.textInput, !passwordValid && passwordTouched ? styles.invalid : null]}
-                        value={password}
-                        onChangeText={text => {
-                            setPassword(text);
-                            setPasswordValid(text ? true : false);
-                            setPasswordTouched(true);
-                        }}
-                        placeholder={'Password'}
-                        secureTextEntry={!passwordShow}
-                        autoCapitalize='none'
-                        ref={input => {
-                            setPasswordRef(input);
-                        }}
-                        blurOnSubmit={true}
-                        returnKeyType={'done'}
-                    />
-                    <Ionicons name={passwordIcon} size={25} style={styles.showPasswordIcon}
-                        onPress={() => {
-                            passwordIcon === 'md-eye' ? setPasswordIcon('md-eye-off') : setPasswordIcon('md-eye');
-                            setPasswordShow(!passwordShow);
-                        }}></Ionicons>
+        <KeyboardAvoidingView style={styles.container} behavior="padding" keyboardVerticalOffset={50}>
+                <View style={styles.shadowContainer}>
+                    <ScrollView keyboardShouldPersistTaps={'always'}>
+                        <Text style={styles.logoText}>last.fm</Text>
+                        <Text style={styles.headerText}>Music Service</Text>
+                        <TextInput
+                            style={[styles.textInput, !usernameValid && usernameTouched ? styles.invalid : null]}
+                            value={username}
+                            onChangeText={text => {
+                                setUsername(text);
+                                setUsernameValid(text ? true : false);
+                                setUsernameTouched(true);
+                            }}
+                            placeholder={'Username'}
+                            autoCapitalize='none'
+                            onSubmitEditing={() => { passwordRef.focus(); }}
+                            blurOnSubmit={false}
+                            returnKeyType={'next'}
+                        />
+                        <View style={styles.passwordInput}>
+                            <TextInput
+                                style={[styles.textInput, !passwordValid && passwordTouched ? styles.invalid : null]}
+                                value={password}
+                                onChangeText={text => {
+                                    setPassword(text);
+                                    setPasswordValid(text ? true : false);
+                                    setPasswordTouched(true);
+                                }}
+                                placeholder={'Password'}
+                                secureTextEntry={!passwordShow}
+                                autoCapitalize='none'
+                                ref={input => {
+                                    setPasswordRef(input);
+                                }}
+                                blurOnSubmit={true}
+                                returnKeyType={'done'}
+                            />
+                            <Ionicons name={passwordIcon} size={25} style={styles.showPasswordIcon}
+                                onPress={() => {
+                                    passwordIcon === 'md-eye' ? setPasswordIcon('md-eye-off') : setPasswordIcon('md-eye');
+                                    setPasswordShow(!passwordShow);
+                                }}></Ionicons>
+                        </View>
+                    </ScrollView>
+                    <View style={styles.buttonContainer}>
+                        {submitButton}
+                    </View>
                 </View>
-            </View>
-            {submitButton}
         </KeyboardAvoidingView>
     );
 }
@@ -123,9 +125,22 @@ LoginScreen.navigationOptions = navData => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.accentColor,
+        justifyContent: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        backgroundColor: '#f2f2f2'
+    },
+    shadowContainer: {
+        shadowColor: 'black',
+        shadowOpacity: 0.26,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 8,
+        elevation: 5,
+        borderRadius: 10,
+        backgroundColor: 'white',
+        width: '80%',
+        maxWidth: 400,
+        maxHeight: 400,
+        padding: 20
     },
     logoText: {
         color: Colors.accentColor,
@@ -144,11 +159,11 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 24,
         fontWeight: 'bold',
-        textAlign: 'center'
+        textAlign: 'center',
+        paddingBottom: 10
     },
     form: {
-        paddingTop: '10%',
-        width: "80%"
+        paddingTop: '10%'
     },
     textInput: {
         width: '100%',
@@ -168,6 +183,9 @@ const styles = StyleSheet.create({
     invalid: {
         borderColor: 'red',
         borderBottomWidth: 2
+    },
+    buttonContainer: {
+        alignItems: 'center'
     },
     disabledButton: {
         backgroundColor: "#eee",
