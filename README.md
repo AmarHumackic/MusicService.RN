@@ -4,7 +4,7 @@ React Native app, runnable with Expo, which uses last.fm API.
 
 Expo: https://expo.io/@humast/MOPMusicService
 
-**LOGIN DATA:  
+**LOGIN DATA  
 username: humast  
 password: test123.**
 
